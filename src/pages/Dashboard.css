@@ -20,9 +20,34 @@
   flex-direction: column;
   gap: 6px;
   transition: border-color 0.2s ease;
+  position: relative;
+  overflow: hidden;
 }
 
-.summary-card:hover { border-color: var(--color-border); }
+.summary-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: var(--radius);
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.summary-card:nth-child(1)::before {
+  background: radial-gradient(ellipse 90% 80% at 85% 20%, rgba(255, 69, 0, 0.13) 0%, transparent 70%);
+}
+
+.summary-card:nth-child(2)::before {
+  background: radial-gradient(ellipse 100% 90% at 15% 80%, rgba(255, 90, 0, 0.11) 0%, transparent 65%);
+}
+
+.summary-card:nth-child(3)::before {
+  background: radial-gradient(ellipse 80% 100% at 80% 90%, rgba(255, 69, 0, 0.12) 0%, transparent 68%);
+}
+
+.summary-card:hover::before { opacity: 1.6; }
+.summary-card:hover { border-color: rgba(255, 69, 0, 0.3); }
 
 .summary-card-label {
   font-size: 11px;

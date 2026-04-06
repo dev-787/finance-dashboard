@@ -20,9 +20,37 @@
   flex-direction: column;
   gap: 8px;
   transition: border-color 0.2s ease;
+  position: relative;
+  overflow: hidden;
 }
 
-.insight-card:hover { border-color: var(--color-border); }
+.insight-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: var(--radius);
+  transition: opacity 0.3s ease;
+}
+
+.insight-card:nth-child(1)::before {
+  background: radial-gradient(ellipse 100% 90% at 90% 15%, rgba(255, 69, 0, 0.13) 0%, transparent 65%);
+}
+
+.insight-card:nth-child(2)::before {
+  background: radial-gradient(ellipse 90% 100% at 10% 85%, rgba(255, 80, 0, 0.11) 0%, transparent 65%);
+}
+
+.insight-card:nth-child(3)::before {
+  background: radial-gradient(ellipse 110% 80% at 85% 85%, rgba(255, 69, 0, 0.1) 0%, transparent 65%);
+}
+
+.insight-card:nth-child(4)::before {
+  background: radial-gradient(ellipse 95% 95% at 15% 15%, rgba(255, 60, 0, 0.12) 0%, transparent 65%);
+}
+
+.insight-card:hover::before { opacity: 1.5; }
+.insight-card:hover { border-color: rgba(255, 69, 0, 0.3); }
 
 .insight-label {
   font-size: 11px;
