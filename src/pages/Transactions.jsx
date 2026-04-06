@@ -1,13 +1,10 @@
 import { useState, useMemo } from 'react';
 import { useAppContext } from '../context/AppContext';
+import TransactionDetailModal from '../components/ui/TransactionDetailModal';
+import CategoryIcon from '../components/ui/CategoryIcon';
 import './Transactions.css';
 
 const CATEGORIES = ['All', 'Food', 'Housing', 'Entertainment', 'Shopping', 'Utilities', 'Health', 'Transport', 'Income'];
-
-const categoryIcons = {
-  Income: '💰', Food: '🛒', Housing: '🏠', Entertainment: '🎬',
-  Shopping: '🛍️', Utilities: '⚡', Health: '🏥', Transport: '🚗',
-};
 
 export default function Transactions() {
   const { transactions, role } = useAppContext();
@@ -16,6 +13,7 @@ export default function Transactions() {
   const [categoryFilter, setCategoryFilter] = useState('All');
   const [sortBy, setSortBy] = useState('date');
   const [sortAsc, setSortAsc] = useState(false);
+  const [selectedTx, setSelectedTx] = useState(null);
 
   const toggleSort = (field) => {
     if (sortBy === field) setSortAsc((a) => !a);
@@ -84,13 +82,12 @@ export default function Transactions() {
               <th>Date</th>
               <th>Type</th>
               <th>Amount</th>
-              {role === 'Admin' && <th></th>}
             </tr>
           </thead>
           <tbody>
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan={role === 'Admin' ? 7 : 6}>
+                <td colSpan={6}>
                   <div className="tx-empty">
                     <span className="tx-empty-icon">🔍</span>
                     <p>No transactions match your filters</p>
@@ -99,11 +96,9 @@ export default function Transactions() {
               </tr>
             ) : (
               filtered.map((tx) => (
-                <tr key={tx.id} className="tx-row">
+                <tr key={tx.id} className="tx-row" onClick={() => setSelectedTx(tx)}>
                   <td>
-                    <div className="tx-row-icon">
-                      {categoryIcons[tx.category] || '💳'}
-                    </div>
+                    <CategoryIcon category={tx.category} />
                   </td>
                   <td className="tx-row-name">{tx.name}</td>
                   <td className="tx-row-cat">{tx.category}</td>
@@ -114,19 +109,21 @@ export default function Transactions() {
                     </span>
                   </td>
                   <td className={`tx-row-amount ${tx.type}`}>
-                    {tx.type === 'income' ? '+' : '-'}${Math.abs(tx.amount).toLocaleString()}
+                    {tx.type === 'income' ? '+' : '-'}₹{Math.abs(tx.amount).toLocaleString('en-IN')}
                   </td>
-                  {role === 'Admin' && (
-                    <td>
-                      <button className="tx-edit-btn" onClick={() => alert(`Edit: ${tx.name}`)}>Edit</button>
-                    </td>
-                  )}
                 </tr>
               ))
             )}
           </tbody>
         </table>
       </div>
+
+      {selectedTx && (
+        <TransactionDetailModal
+          transaction={selectedTx}
+          onClose={() => setSelectedTx(null)}
+        />
+      )}
     </div>
   );
 }

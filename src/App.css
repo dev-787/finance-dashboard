@@ -70,3 +70,16 @@ body {
 @media (max-width: 768px) {
   .app-main { margin-left: 0; }
 }
+
+[data-theme="light"] {
+  --color-bg:           #f5f5f5;
+  --color-surface:      #ffffff;
+  --color-surface-2:    #efefef;
+  --color-border:       #e0e0e0;
+  --color-primary:      #ff4500;
+  --color-primary-glow: rgba(255, 69, 0, 0.1);
+  --color-text:         #111111;
+  --color-text-muted:   #888888;
+  --color-success:      #16a34a;
+  --color-danger:       #dc2626;
+}

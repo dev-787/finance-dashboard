@@ -22,7 +22,7 @@
   transition: border-color 0.2s ease;
 }
 
-.summary-card:hover { border-color: #333; }
+.summary-card:hover { border-color: var(--color-border); }
 
 .summary-card-label {
   font-size: 11px;
@@ -106,7 +106,7 @@
   transition: border-color 0.15s ease;
 }
 
-.chart-ctrl-btn:hover { border-color: #444; color: #aaa; }
+.chart-ctrl-btn:hover { border-color: var(--color-border); color: var(--color-text-muted); }
 
 .chart-legend {
   display: flex;
@@ -132,18 +132,18 @@
 }
 
 .chart-tooltip {
-  background: #1a1a1a;
-  border: 1px solid #333;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 8px;
   padding: 10px 14px;
   font-size: 12.5px;
-  color: #fff;
+  color: var(--color-text);
   line-height: 1.8;
 }
 
 .chart-tooltip-label {
   font-weight: 600;
-  color: #fff;
+  color: var(--color-text);
   margin-bottom: 4px;
   font-family: 'Syne', sans-serif;
 }
@@ -180,7 +180,7 @@
   flex-shrink: 0;
 }
 
-.tx-name { font-size: 13px; font-weight: 500; color: #ddd; margin: 0; }
+.tx-name { font-size: 13px; font-weight: 500; color: var(--color-text); margin: 0; }
 .tx-meta { font-size: 11.5px; color: var(--color-text-muted); }
 .tx-amount { font-size: 13.5px; font-weight: 600; }
 .tx-amount.income  { color: var(--color-success); }
@@ -207,7 +207,7 @@
   font-size: 12.5px;
 }
 
-.pie-legend-left { display: flex; align-items: center; gap: 9px; color: #aaa; }
+.pie-legend-left { display: flex; align-items: center; gap: 9px; color: var(--color-text-muted); }
 
 .pie-legend-dot {
   width: 9px;

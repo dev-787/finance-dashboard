@@ -10,22 +10,31 @@ export default function Insights() {
 
   const insights = useMemo(() => {
     const expenses = transactions.filter((t) => t.type === 'expense');
-    const now = new Date();
-    const thisMonth = now.getMonth();
-    const thisYear = now.getFullYear();
+    if (!expenses.length) return null;
+
+    // Use the most recent month present in the data rather than real current date
+    const latestDate = expenses.reduce((max, t) => t.date > max ? t.date : max, expenses[0].date);
+    const thisMonth = parseInt(latestDate.split('-')[1], 10) - 1;
+    const thisYear  = parseInt(latestDate.split('-')[0], 10);
     const lastMonth = thisMonth === 0 ? 11 : thisMonth - 1;
     const lastMonthYear = thisMonth === 0 ? thisYear - 1 : thisYear;
 
+    const parseMonth = (dateStr) => {
+      const [, m] = dateStr.split('-');
+      return parseInt(m, 10) - 1;
+    };
+    const parseYear = (dateStr) => parseInt(dateStr.split('-')[0], 10);
+
     const thisMonthExp = expenses
-      .filter((t) => { const d = new Date(t.date); return d.getMonth() === thisMonth && d.getFullYear() === thisYear; })
+      .filter((t) => parseMonth(t.date) === thisMonth && parseYear(t.date) === thisYear)
       .reduce((s, t) => s + Math.abs(t.amount), 0);
 
     const lastMonthExp = expenses
-      .filter((t) => { const d = new Date(t.date); return d.getMonth() === lastMonth && d.getFullYear() === lastMonthYear; })
+      .filter((t) => parseMonth(t.date) === lastMonth && parseYear(t.date) === lastMonthYear)
       .reduce((s, t) => s + Math.abs(t.amount), 0);
 
     const pctDelta = lastMonthExp === 0 ? 100 : (((thisMonthExp - lastMonthExp) / lastMonthExp) * 100).toFixed(1);
-    const deltaUp = pctDelta >= 0;
+    const deltaUp = Number(pctDelta) >= 0;
 
     const daysInMonth = new Date(thisYear, thisMonth + 1, 0).getDate();
     const avgDaily = (thisMonthExp / daysInMonth).toFixed(2);
@@ -53,12 +62,12 @@ export default function Insights() {
         <div className="insight-card">
           <span className="insight-label">Highest Spending Category</span>
           <div className="insight-value">{insights.topCat[0]}</div>
-          <span className="insight-sub">${insights.topCat[1].toLocaleString()} total spent</span>
+          <span className="insight-sub">₹{insights.topCat[1].toLocaleString('en-IN')} total spent</span>
         </div>
 
         <div className="insight-card">
           <span className="insight-label">This Month vs Last Month</span>
-          <div className="insight-value">${insights.thisMonthExp.toLocaleString()}</div>
+          <div className="insight-value">₹{insights.thisMonthExp.toLocaleString('en-IN')}</div>
           <span className={`insight-badge ${insights.deltaUp ? 'down' : 'up'}`}>
             {insights.deltaUp ? '↑' : '↓'} {Math.abs(insights.pctDelta)}%
           </span>
@@ -67,13 +76,13 @@ export default function Insights() {
 
         <div className="insight-card">
           <span className="insight-label">Average Daily Spend</span>
-          <div className="insight-value">${insights.avgDaily}</div>
+          <div className="insight-value">₹{insights.avgDaily}</div>
           <span className="insight-sub">per day this month</span>
         </div>
 
         <div className="insight-card">
           <span className="insight-label">Biggest Single Expense</span>
-          <div className="insight-value">${Math.abs(insights.biggest?.amount).toLocaleString()}</div>
+          <div className="insight-value">₹{Math.abs(insights.biggest?.amount).toLocaleString('en-IN')}</div>
           <span className="insight-sub">{insights.biggest?.name}</span>
         </div>
       </div>
@@ -83,10 +92,10 @@ export default function Insights() {
         <ResponsiveContainer width="100%" height={260}>
           <BarChart data={insights.catChartData} layout="vertical" barCategoryGap="25%">
             <CartesianGrid horizontal={false} stroke="#1e1e1e" />
-            <XAxis type="number" tick={{ fill: '#555', fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={(v) => `$${v}`} />
+            <XAxis type="number" tick={{ fill: '#555', fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={(v) => `₹${v}`} />
             <YAxis type="category" dataKey="name" tick={{ fill: '#888', fontSize: 12 }} axisLine={false} tickLine={false} width={90} />
             <Tooltip
-              formatter={(v) => [`$${v.toLocaleString()}`, 'Spent']}
+              formatter={(v) => [`₹${v.toLocaleString('en-IN')}`, 'Spent']}
               contentStyle={{ background: '#1a1a1a', border: '1px solid #333', borderRadius: 8, color: '#fff', fontSize: 12 }}
               cursor={{ fill: 'rgba(255,255,255,0.03)' }}
             />

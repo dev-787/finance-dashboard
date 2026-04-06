@@ -22,7 +22,7 @@
   transition: border-color 0.2s ease;
 }
 
-.insight-card:hover { border-color: #333; }
+.insight-card:hover { border-color: var(--color-border); }
 
 .insight-label {
   font-size: 11px;

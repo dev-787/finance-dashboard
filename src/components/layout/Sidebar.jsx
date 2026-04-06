@@ -71,9 +71,9 @@ export default function Sidebar({ activePage, setActivePage }) {
         </select>
 
         <div className="sidebar-user">
-          <div className="sidebar-avatar">AS</div>
+          <div className="sidebar-avatar">DT</div>
           <div className="sidebar-user-info">
-            <p className="sidebar-user-name">Aryan Shah</p>
+            <p className="sidebar-user-name">Dev Tailor</p>
             <span className="sidebar-user-sub">Personal Account</span>
           </div>
         </div>

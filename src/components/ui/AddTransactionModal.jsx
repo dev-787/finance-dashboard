@@ -62,7 +62,7 @@ export default function AddTransactionModal({ onClose }) {
           </div>
 
           <div className="modal-field">
-            <label className="modal-label">Amount ($)</label>
+            <label className="modal-label">Amount (₹)</label>
             <input
               className={`modal-input ${errors.amount ? 'error' : ''}`}
               placeholder="0.00"

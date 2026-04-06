@@ -18,7 +18,7 @@ function AppLayout() {
       <div className="app-main">
         <Navbar activePage={activePage} onAddTransaction={() => setShowModal(true)} />
         <div className="app-content">
-          {activePage === 'dashboard'    && <Dashboard />}
+      {activePage === 'dashboard'    && <Dashboard setActivePage={setActivePage} />}
           {activePage === 'transactions' && <Transactions />}
           {activePage === 'insights'     && <Insights />}
         </div>

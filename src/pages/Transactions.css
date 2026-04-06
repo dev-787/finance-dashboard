@@ -48,7 +48,7 @@
 .tx-select {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  color: #ccc;
+  color: var(--color-text-muted);
   padding: 8px 12px;
   border-radius: 8px;
   font-size: 12.5px;
@@ -75,7 +75,7 @@
   white-space: nowrap;
 }
 
-.tx-sort-btn:hover { color: #ccc; border-color: #333; }
+.tx-sort-btn:hover { color: var(--color-text); border-color: var(--color-border); }
 .tx-sort-btn.active { border-color: var(--color-primary); color: var(--color-primary); }
 
 .tx-table-wrap {
@@ -107,6 +107,7 @@
 .tx-row {
   border-bottom: 1px solid var(--color-border);
   transition: background 0.12s ease;
+  cursor: pointer;
 }
 
 .tx-row:last-child { border-bottom: none; }
@@ -129,7 +130,7 @@
   font-size: 14px;
 }
 
-.tx-row-name { font-weight: 500; color: #ddd; }
+.tx-row-name { font-weight: 500; color: var(--color-text); }
 .tx-row-cat  { color: var(--color-text-muted); }
 .tx-row-date { color: var(--color-text-muted); white-space: nowrap; }
 

@@ -1,30 +1,67 @@
+import { useMemo } from 'react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, PieChart, Pie, Cell,
 } from 'recharts';
-import { chartData, recentTransactions, spendingBreakdown } from '../data/mockData';
+import { chartData } from '../data/mockData';
+import { useAppContext } from '../context/AppContext';
+import CategoryIcon from '../components/ui/CategoryIcon';
 import './Dashboard.css';
 
-const summaryCards = [
-  { label: 'Total Balance',  value: '$12,450.00', badge: '↑ 8.2%', badgeType: 'up',   sub: 'vs last month' },
-  { label: 'Total Income',   value: '$8,200.00',  badge: '↑ 12%',  badgeType: 'up',   sub: 'This Month', valueClass: 'green' },
-  { label: 'Total Expenses', value: '$3,750.00',  badge: '↓ 3.4%', badgeType: 'down', sub: 'This Month', valueClass: 'red' },
-];
+const PIE_COLORS = ['#ff4500', '#ff6a30', '#cc3700', '#3a3a3a', '#555555', '#ff7340', '#992800'];
 
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
       <div className="chart-tooltip">
         <p className="chart-tooltip-label">{label}</p>
-        <p style={{ color: '#ff4500' }}>Income: ${payload[0]?.value?.toLocaleString()}</p>
-        <p style={{ color: '#aaa' }}>Expenses: ${payload[1]?.value?.toLocaleString()}</p>
+        <p style={{ color: '#ff4500' }}>Income: ₹{payload[0]?.value?.toLocaleString('en-IN')}</p>
+        <p style={{ color: '#aaa' }}>Expenses: ₹{payload[1]?.value?.toLocaleString('en-IN')}</p>
       </div>
     );
   }
   return null;
 };
 
-export default function Dashboard() {
+export default function Dashboard({ setActivePage }) {
+  const { transactions } = useAppContext();
+
+  const summary = useMemo(() => {
+    const totalIncome  = transactions.filter((t) => t.type === 'income').reduce((s, t) => s + t.amount, 0);
+    const totalExpense = transactions.filter((t) => t.type === 'expense').reduce((s, t) => s + Math.abs(t.amount), 0);
+    const balance = totalIncome - totalExpense;
+    return { balance, totalIncome, totalExpense };
+  }, [transactions]);
+
+  const recentTransactions = useMemo(() =>
+    [...transactions]
+      .sort((a, b) => new Date(b.date) - new Date(a.date))
+      .slice(0, 5),
+    [transactions]
+  );
+
+  const spendingBreakdown = useMemo(() => {
+    const expenses = transactions.filter((t) => t.type === 'expense');
+    const totals = expenses.reduce((acc, t) => {
+      acc[t.category] = (acc[t.category] || 0) + Math.abs(t.amount);
+      return acc;
+    }, {});
+    const grand = Object.values(totals).reduce((s, v) => s + v, 0);
+    return Object.entries(totals)
+      .sort((a, b) => b[1] - a[1])
+      .map(([label, amt], i) => ({
+        label,
+        pct: grand > 0 ? Math.round((amt / grand) * 100) : 0,
+        color: PIE_COLORS[i % PIE_COLORS.length],
+      }));
+  }, [transactions]);
+
+  const summaryCards = [
+    { label: 'Total Balance',  value: `₹${summary.balance.toLocaleString('en-IN')}`,     badge: '↑ 8.2%', badgeType: 'up',   sub: 'vs last month' },
+    { label: 'Total Income',   value: `₹${summary.totalIncome.toLocaleString('en-IN')}`,  badge: '↑ 12%',  badgeType: 'up',   sub: 'All time', valueClass: 'green' },
+    { label: 'Total Expenses', value: `₹${summary.totalExpense.toLocaleString('en-IN')}`, badge: '↓ 3.4%', badgeType: 'down', sub: 'All time', valueClass: 'red' },
+  ];
+
   return (
     <div className="dashboard">
       <div className="dashboard-cards">
@@ -66,7 +103,7 @@ export default function Dashboard() {
           <BarChart data={chartData} barCategoryGap="30%" barGap={4}>
             <CartesianGrid vertical={false} stroke="#1e1e1e" />
             <XAxis dataKey="month" tick={{ fill: '#555', fontSize: 11 }} axisLine={false} tickLine={false} />
-            <YAxis tick={{ fill: '#555', fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} />
+            <YAxis tick={{ fill: '#555', fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={(v) => `₹${(v / 1000).toFixed(0)}k`} />
             <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.03)' }} />
             <Bar dataKey="income"   name="Income"   fill="#ff4500" radius={[4, 4, 0, 0]} />
             <Bar dataKey="expenses" name="Expenses" fill="#2e2e2e" radius={[4, 4, 0, 0]} />
@@ -89,20 +126,22 @@ export default function Dashboard() {
         <div className="chart-card">
           <div className="chart-card-header">
             <h2 className="chart-title">Recent Transactions</h2>
-            <a className="view-all-link">View All →</a>
+            <a className="view-all-link" onClick={() => setActivePage('transactions')}>View All →</a>
           </div>
           <div className="tx-list">
             {recentTransactions.map((tx) => (
               <div className="tx-item" key={tx.id}>
                 <div className="tx-left">
-                  <div className="tx-icon">{tx.icon}</div>
+                  <CategoryIcon category={tx.category} />
                   <div>
                     <p className="tx-name">{tx.name}</p>
-                    <span className="tx-meta">{tx.date} · {tx.category}</span>
+                    <span className="tx-meta">
+                      {new Date(tx.date).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })} · {tx.category}
+                    </span>
                   </div>
                 </div>
                 <span className={`tx-amount ${tx.type}`}>
-                  {tx.type === 'income' ? '+' : ''}${Math.abs(tx.amount).toLocaleString()}
+                  {tx.type === 'income' ? '+' : '-'}₹{Math.abs(tx.amount).toLocaleString('en-IN')}
                 </span>
               </div>
             ))}
