@@ -7,12 +7,19 @@ const pageTitles = {
   insights: 'Insights',
 };
 
-export default function Navbar({ activePage, onAddTransaction }) {
+export default function Navbar({ activePage, onAddTransaction, onMenuClick }) {
   const { role, toggleTheme, theme } = useAppContext();
 
   return (
     <header className="navbar">
       <div className="navbar-left">
+        <button className="navbar-hamburger" onClick={onMenuClick} aria-label="Open menu">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
+        </button>
         <h1 className="navbar-title">{pageTitles[activePage]}</h1>
       </div>
 

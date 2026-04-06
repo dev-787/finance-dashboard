@@ -5,13 +5,24 @@ const AppContext = createContext(null);
 
 export function AppProvider({ children }) {
   const [role, setRole] = useState('Admin');
-  const [transactions, setTransactions] = useState(allTransactions);
+  const [transactions, setTransactions] = useState(() => {
+    try {
+      const stored = localStorage.getItem('clario_transactions');
+      return stored ? JSON.parse(stored) : allTransactions;
+    } catch {
+      return allTransactions;
+    }
+  });
   const [dateRange, setDateRange] = useState('This Month');
   const [theme, setTheme] = useState('dark');
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
   }, [theme]);
+
+  useEffect(() => {
+    localStorage.setItem('clario_transactions', JSON.stringify(transactions));
+  }, [transactions]);
 
   const toggleTheme = () => setTheme((t) => t === 'dark' ? 'light' : 'dark');
 

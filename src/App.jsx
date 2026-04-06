@@ -11,12 +11,22 @@ import './App.css';
 function AppLayout() {
   const [activePage, setActivePage] = useState('dashboard');
   const [showModal, setShowModal] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
     <div className="app-root">
-      <Sidebar activePage={activePage} setActivePage={setActivePage} />
+      <Sidebar
+        activePage={activePage}
+        setActivePage={setActivePage}
+        open={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+      />
       <div className="app-main">
-        <Navbar activePage={activePage} onAddTransaction={() => setShowModal(true)} />
+        <Navbar
+          activePage={activePage}
+          onAddTransaction={() => setShowModal(true)}
+          onMenuClick={() => setSidebarOpen(true)}
+        />
         <div className="app-content">
       {activePage === 'dashboard'    && <Dashboard setActivePage={setActivePage} />}
           {activePage === 'transactions' && <Transactions />}

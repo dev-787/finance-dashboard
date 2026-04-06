@@ -90,7 +90,28 @@
 
 .navbar-add-btn:hover { opacity: 0.88; }
 
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.navbar-hamburger {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: 4px;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s ease;
+}
+
+.navbar-hamburger:hover { color: var(--color-text); }
+
 @media (max-width: 768px) {
-  .navbar-pill-group { display: none; }
+  .navbar-hamburger { display: flex; }
   .navbar { padding: 0 16px; }
+  .navbar-add-btn { padding: 8px 12px; font-size: 12px; }
 }
